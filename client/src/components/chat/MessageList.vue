@@ -1,28 +1,32 @@
 <template>
   <div class="message-list">
-    <ChatMessage
-      v-for="message in list"
-      :key="message.userId"
-      :message="message"
-    />
+    <transition-group name="transition-fade">
+      <MessageListItem
+        v-for="message in list"
+        :key="message.userId"
+        :message="message"
+      />
+    </transition-group>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
+import { defineComponent, PropType } from 'vue';
 
-import ChatMessage from './MessageListItem.vue';
+import { ChatMessage } from '@/types/api/Chat';
+
+import MessageListItem from './MessageListItem.vue';
 
 export default defineComponent({
   name: 'ChatList',
   props: {
     list: {
-      type: Array,
+      type: Array as PropType<Array<ChatMessage>>,
       default: () => [],
     },
   },
   components: {
-    ChatMessage,
+    MessageListItem,
   },
 });
 </script>

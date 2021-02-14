@@ -1,5 +1,5 @@
 {
-  "name": "test",
+  "name": "roulette",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -39,7 +39,13 @@
     "node-sass": "^4.12.0",
     "prettier": "^1.19.1",
     "sass-loader": "^8.0.2",
+    "style-resources-loader": "^1.4.1",
+    "stylelint": "^13.10.0",
+    "stylelint-config-recess-order": "^2.3.0",
+    "stylelint-config-standard": "^20.0.0",
+    "stylelint-webpack-plugin": "^2.1.1",
     "typescript": "~3.9.3",
+    "vue-cli-plugin-style-resources-loader": "^0.1.4",
     "vue-jest": "^5.0.0-0"
   }
 }

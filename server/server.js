@@ -7,9 +7,8 @@ const io = require("socket.io")(http, {
   }
 });
 
-const registerEvents = require("./registerEvents");
-
-const chat = [];
+const chat = require("./messages");
+const rooms = require("./rooms");
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
@@ -20,17 +19,17 @@ app.use((req, res, next) => {
   next();
 });
 
-io.on("connection", socket => {
-  console.log("a user connected");
-
-  socket.emit("GET_CHAT", chat);
-
-  socket.on("ADD_MESSAGE", () => {
-    chat.push({ message: "asdasd", userId: Math.random() });
-    socket.emit("GET_CHAT", chat);
-  });
-});
-
 http.listen(3000, () => {
   console.log("listening on *:3000");
+});
+
+io.on("connection", socket => {
+  socket.emit("GET_CHAT", chat);
+  socket.emit("GET_ROOMS_LIST", rooms);
+  socket.emit("GET_ROOM", rooms[0]);
+
+  socket.on("ADD_MESSAGE", data => {
+    chat.push(data);
+    socket.emit("GET_CHAT", chat);
+  });
 });

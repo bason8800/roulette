@@ -1,0 +1,13 @@
+@import "globals/variables";
+@import "globals/transition-fade";
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  color: $color-light-grey;
+  background: $color-main;
+}
