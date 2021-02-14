@@ -1,12 +1,10 @@
 import { MainData } from '@/types/api/App';
 
-export interface State {
-  mainData: MainData;
-}
+export type State = {
+  [K in keyof MainData]: MainData[K];
+};
 
 export const state: State = {
-  mainData: {
-    lang: 'en',
-    usersOnline: 0,
-  },
+  lang: 'en',
+  usersOnline: 0,
 };

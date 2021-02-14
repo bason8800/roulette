@@ -4,7 +4,7 @@ import { createApp } from 'vue';
 
 import router from './router';
 import { store } from './store';
-import { chatSocket } from '@/socket';
+import { appSocket, chatSocket } from '@/socket';
 
 import App from './App.vue';
 
@@ -15,4 +15,6 @@ app
   .use(router)
   .mount('#app');
 
-chatSocket.registerEvents();
+[chatSocket, appSocket].forEach(socket => {
+  socket.registerEvents();
+});

@@ -12,6 +12,6 @@ export type Mutations<S = State> = {
 
 export const mutations: MutationTree<State> & Mutations = {
   [MutationTypes.GET_MAIN_DATA](state, payload) {
-    state.mainData = payload;
+    Object.assign(state, payload);
   },
 };

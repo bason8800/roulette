@@ -1,13 +1,15 @@
-import { ChatMessage, ChatRoom } from '@/types/api/Chat';
+import { ChatMessage, ChatRoom, ChatUser } from '@/types/api/Chat';
 
 export interface State {
-  messageList: Array<ChatMessage>;
-  roomList: Array<ChatRoom>;
   room: ChatRoom | null;
+  roomList: Array<ChatRoom>;
+  messageList: Array<ChatMessage>;
+  usersRoomList: Array<ChatUser>;
 }
 
 export const state: State = {
-  messageList: [],
-  roomList: [],
   room: null,
+  roomList: [],
+  messageList: [],
+  usersRoomList: [],
 };

@@ -1,6 +1,12 @@
 <template>
   <div class="base-input">
-    <input type="text" :value="modelValue" @input="onInput" />
+    <component
+      v-bind="$attrs"
+      class="base-input__inner"
+      :is="component"
+      :value="modelValue"
+      @input="onInput"
+    />
   </div>
 </template>
 
@@ -13,6 +19,11 @@ export default defineComponent({
     modelValue: {
       type: String,
       default: '',
+    },
+    component: {
+      type: String,
+      default: 'input',
+      validator: (val: string) => ['input', 'textarea'].includes(val),
     },
   },
   setup(props, ctx) {
@@ -27,4 +38,27 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.base-input {
+  &__inner {
+    position: relative;
+    z-index: 10;
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    padding: 12px 36px 12px 15px;
+    color: $color-grey-1;
+    resize: none;
+    background-color: $color-dark;
+    border-color: $color-grey;
+    border-width: 1px;
+    border-radius: 4px;
+    outline: none;
+    transition: border $transition;
+
+    &:focus {
+      border-color: $color-yellow;
+    }
+  }
+}
+</style>

@@ -2,18 +2,20 @@
   <div class="message-list">
     <transition-group name="transition-fade">
       <MessageListItem
-        v-for="message in list"
-        :key="message.userId"
-        :message="message"
+        v-for="(item, idx) in list"
+        :key="idx"
+        :message="item.message"
+        :user="getUser(item.userId)"
       />
     </transition-group>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { computed, defineComponent, PropType } from 'vue';
 
 import { ChatMessage } from '@/types/api/Chat';
+import { useStore } from '@/store';
 
 import MessageListItem from './MessageListItem.vue';
 
@@ -27,6 +29,22 @@ export default defineComponent({
   },
   components: {
     MessageListItem,
+  },
+  setup() {
+    const {
+      state: { chat },
+    } = useStore();
+
+    const usersRoomList = computed(() => chat.usersRoomList);
+
+    const getUser = (userId: number) => {
+      return usersRoomList.value.find(user => user.id === userId);
+    };
+
+    return {
+      usersRoomList,
+      getUser,
+    };
   },
 });
 </script>

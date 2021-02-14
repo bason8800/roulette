@@ -1,11 +1,13 @@
+import { useStore } from '@/store';
+
 type Events = {
   [key: string]: (...args: any) => any;
 };
 
 export abstract class Socket {
   protected socket: SocketIOClient.Socket;
-
   protected events: Events = {};
+  protected store = useStore();
 
   protected constructor(socket: SocketIOClient.Socket) {
     this.socket = socket;
