@@ -1,7 +1,3 @@
-const EVENTS = {
-  GET_CHAT: "GET_CHAT"
-};
-
 const eventsValues = {};
 
 module.exports = function registerEvents(socket) {

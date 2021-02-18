@@ -15,6 +15,7 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'BaseInput',
+  inheritAttrs: false,
   props: {
     modelValue: {
       type: String,
@@ -42,7 +43,6 @@ export default defineComponent({
 .base-input {
   &__inner {
     position: relative;
-    z-index: 10;
     box-sizing: border-box;
     display: block;
     width: 100%;

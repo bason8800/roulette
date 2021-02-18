@@ -3,16 +3,17 @@ export type ChatMessage = {
   userId: number;
 };
 
-export type ChatRoom = {
-  id: number;
-  name: string;
-  icon: string;
-  usersCount: number;
-};
-
 export type ChatUser = {
   id: number;
   name: string;
   level: string;
   avatar: string;
+};
+
+export type ChatRoom = {
+  id: number;
+  name: string;
+  icon: string;
+  users: Array<ChatUser>;
+  messagesList: Array<ChatMessage>;
 };

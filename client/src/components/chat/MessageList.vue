@@ -15,6 +15,7 @@
 import { computed, defineComponent, PropType } from 'vue';
 
 import { ChatMessage } from '@/types/api/Chat';
+
 import { useStore } from '@/store';
 
 import MessageListItem from './MessageListItem.vue';
@@ -35,7 +36,7 @@ export default defineComponent({
       state: { chat },
     } = useStore();
 
-    const usersRoomList = computed(() => chat.usersRoomList);
+    const usersRoomList = computed(() => chat.room.users);
 
     const getUser = (userId: number) => {
       return usersRoomList.value.find(user => user.id === userId);

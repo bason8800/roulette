@@ -6,14 +6,14 @@ import { MainData } from '@/types/api/App';
 
 export class AppSocket extends Socket {
   protected events = {
-    [APP_EVENTS.GET_MAIN_DATA]: this.getMainDataHandler,
+    [APP_EVENTS.GET_MAIN_DATA]: this.getMainData,
   };
 
   constructor(socket: SocketIOClient.Socket) {
     super(socket);
   }
 
-  getMainDataHandler(data: MainData) {
+  getMainData(data: MainData) {
     this.store.commit(MutationTypes.GET_MAIN_DATA, data);
   }
 }

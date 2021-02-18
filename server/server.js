@@ -7,10 +7,9 @@ const io = require("socket.io")(http, {
   }
 });
 
-const chat = require("./mock/messages");
+const users = require("./mock/users");
 const rooms = require("./mock/rooms");
 const mainData = require("./mock/mainData");
-const users = require("./mock/users");
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
@@ -25,15 +24,39 @@ http.listen(3000, () => {
   console.log("listening on *:3000");
 });
 
+const getRoomById = id => rooms.find(room => id === room.id);
+
+const emitUserAndRoom = (socket, roomId = 1) => {
+  const num = users.length + 1;
+  const user = { id: num, name: `New User ${num}`, level: num, avatar: "" };
+  const room = getRoomById(roomId);
+
+  users.push(user);
+
+  room.users.push(users[users.length - 1]);
+
+  socket.emit("GET_USER", { ...user, balance: 10000 });
+  socket.emit("GET_ROOM", room);
+};
+
 io.on("connection", socket => {
-  socket.emit("GET_CHAT", chat);
+  emitUserAndRoom(socket);
+
   socket.emit("GET_ROOMS_LIST", rooms);
-  socket.emit("GET_ROOM", rooms[0]);
-  socket.emit("GET_USERS_ROOM_LIST", users);
   socket.emit("GET_MAIN_DATA", mainData);
 
-  socket.on("ADD_MESSAGE", data => {
-    chat.push(data);
-    socket.emit("GET_CHAT", chat);
+  socket.on("ADD_MESSAGE", ({ roomId, data }) => {
+    const room = getRoomById(roomId);
+
+    room.messagesList.push(data);
+
+    io.emit("GET_ROOM", room);
+  });
+
+  socket.on("CHANGE_ROOM", id => {
+    socket.emit(
+      "GET_ROOM",
+      rooms.find(room => room.id === id)
+    );
   });
 });

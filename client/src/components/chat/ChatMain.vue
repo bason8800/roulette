@@ -2,11 +2,12 @@
   <div class="main-chat">
     <MessageList :list="messageList" />
 
-    <BaseInput v-model="message" component="textarea" />
-
-    <button class="main-chat__add" @click="addMessage">
-      Add message
-    </button>
+    <BaseInput
+      v-model="message"
+      component="textarea"
+      class="main-chat__add-message"
+      @keyup.enter="addMessage"
+    />
   </div>
 </template>
 
@@ -28,18 +29,22 @@ export default defineComponent({
   },
   setup() {
     const {
-      state: { chat },
+      state: { chat, user },
     } = useStore();
 
     const message = ref('');
 
-    const messageList = computed(() => chat.messageList);
+    const messageList = computed(() => chat.room.messagesList);
 
-    const addMessage = () => {
-      chatSocket.addMessage({
+    const addMessage = (e: InputEvent) => {
+      e.stopPropagation();
+
+      chatSocket.addMessage(chat.room.id, {
         message: message.value,
-        userId: Math.random(),
+        userId: user.id,
       });
+
+      message.value = '';
     };
 
     return {
@@ -51,4 +56,13 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.main-chat {
+  &__add-message {
+    position: fixed;
+    bottom: 20px;
+    left: 10px;
+    width: 280px;
+  }
+}
+</style>

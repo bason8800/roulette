@@ -1,7 +1,8 @@
 <template>
   <div class="roulette">
-    <div class="roulette__chat">
+    <div class="roulette__left">
       <ChatRooms class="roulette__chat-rooms" />
+
       <ChatMain class="roulette__chat" />
     </div>
   </div>
@@ -27,9 +28,18 @@ export default defineComponent({
   display: flex;
   height: 100%;
 
-  &__chat {
+  &__left {
+    display: flex;
+    flex-direction: column;
     width: 280px;
+    padding: 10px;
     background: $color-main-light;
+  }
+
+  &__chat {
+    height: 85%;
+    margin-top: 15px;
+    overflow: auto;
   }
 }
 </style>
