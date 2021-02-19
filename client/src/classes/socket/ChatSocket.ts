@@ -4,6 +4,12 @@ import { CHAT_EVENTS, CHAT_EMITS } from '@/constants/socketEvents';
 import { MutationTypes } from '@/store/chat/mutations';
 import { ChatMessage, ChatRoom } from '@/types/api/Chat';
 
+type ChangeRoomParams = {
+  oldRoomId: number;
+  newRoomId: number;
+  userId: number;
+};
+
 export class ChatSocket extends Socket {
   protected events = {
     [CHAT_EVENTS.GET_ROOMS_LIST]: this.getRoomsList,
@@ -26,7 +32,7 @@ export class ChatSocket extends Socket {
     this.socket.emit(CHAT_EMITS.ADD_MESSAGE, { roomId, data });
   }
 
-  changeRoom(id: number) {
-    this.socket.emit(CHAT_EMITS.CHANGE_ROOM, id);
+  changeRoom({ oldRoomId, newRoomId, userId }: ChangeRoomParams) {
+    this.socket.emit(CHAT_EMITS.CHANGE_ROOM, { newRoomId, oldRoomId, userId });
   }
 }

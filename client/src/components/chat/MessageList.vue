@@ -1,14 +1,15 @@
 <template>
-  <div class="message-list">
-    <transition-group name="transition-fade">
+  <transition-group name="transition-fade">
+    <div v-if="list.length" class="message-list">
       <MessageListItem
         v-for="(item, idx) in list"
         :key="idx"
         :message="item.message"
         :user="getUser(item.userId)"
+        class="message-list__item"
       />
-    </transition-group>
-  </div>
+    </div>
+  </transition-group>
 </template>
 
 <script lang="ts">
@@ -50,4 +51,10 @@ export default defineComponent({
 });
 </script>
 
-<style scoped></style>
+<style lang="scss">
+.message-list {
+  &__item {
+    margin-bottom: 10px;
+  }
+}
+</style>

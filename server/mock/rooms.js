@@ -7,7 +7,10 @@ module.exports = [
     icon: "ru",
     users: [users[0], users[1], users[2], users[3]],
     messagesList: [
-      { userId: 1, message: `${users[0].name} message` },
+      {
+        userId: 1,
+        message: `${users[0].name} message message message message`
+      },
       { userId: 2, message: `${users[1].name} message` },
       { userId: 3, message: `${users[2].name} message` },
       { userId: 4, message: `${users[3].name} message` }

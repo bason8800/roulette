@@ -15,3 +15,7 @@ export const APP_EVENTS = {
 export const USER_EVENTS = {
   GET_USER: 'GET_USER',
 };
+
+export const ROULETTE_EVENTS = {
+  GET_TIME: 'GET_TIME',
+};

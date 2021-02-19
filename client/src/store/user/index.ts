@@ -7,7 +7,7 @@ import { CommonStore } from '@/store/common-types';
 import { State, state } from './state';
 import { Mutations, mutations } from './mutations';
 
-export type Store<S> = CommonStore<S, Mutations<S>>;
+export type Store<S = { user: State }> = CommonStore<S, Mutations<S>>;
 
 export const UserModule: Module<State, RootState> = {
   state,

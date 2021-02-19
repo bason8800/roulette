@@ -1,26 +1,23 @@
 import { createStore, createLogger } from 'vuex';
 
-// Main
 import { State as AppState } from '@/store/app/state';
-import { AppModule, Store as AppStore } from '@/store/app';
-
-// ChatModule
 import { State as ChatState } from '@/store/chat/state';
-import { ChatModule, Store as ChatStore } from '@/store/chat';
-
-// UserModule
 import { State as UserState } from '@/store/user/state';
+import { State as RouletteState } from '@/store/roulette/state';
+
+import { AppModule, Store as AppStore } from '@/store/app';
+import { ChatModule, Store as ChatStore } from '@/store/chat';
 import { UserModule, Store as UserStore } from '@/store/user';
+import { RouletteModule, Store as RouletteStore } from '@/store/roulette';
 
 export type State = {
   app: AppState;
   chat: ChatState;
   user: UserState;
+  roulette: RouletteState;
 };
 
-export type Store = ChatStore<Pick<State, 'chat'>> &
-  AppStore<Pick<State, 'app'>> &
-  UserStore<Pick<State, 'user'>>;
+export type Store = ChatStore & AppStore & UserStore & RouletteStore;
 
 export const store = createStore({
   plugins: process.env.NODE_ENV === 'production' ? [] : [createLogger()],
@@ -28,6 +25,7 @@ export const store = createStore({
     chat: ChatModule,
     app: AppModule,
     user: UserModule,
+    roulette: RouletteModule,
   },
 });
 

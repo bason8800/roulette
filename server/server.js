@@ -36,14 +36,19 @@ const emitUserAndRoom = (socket, roomId = 1) => {
   room.users.push(users[users.length - 1]);
 
   socket.emit("GET_USER", { ...user, balance: 10000 });
-  socket.emit("GET_ROOM", room);
+  io.emit("GET_ROOM", room);
 };
+
+const getMainData = () => ({
+  lang: "en",
+  usersOnline: users.length
+});
 
 io.on("connection", socket => {
   emitUserAndRoom(socket);
 
-  socket.emit("GET_ROOMS_LIST", rooms);
-  socket.emit("GET_MAIN_DATA", mainData);
+  io.emit("GET_ROOMS_LIST", rooms);
+  io.emit("GET_MAIN_DATA", getMainData());
 
   socket.on("ADD_MESSAGE", ({ roomId, data }) => {
     const room = getRoomById(roomId);
@@ -53,10 +58,17 @@ io.on("connection", socket => {
     io.emit("GET_ROOM", room);
   });
 
-  socket.on("CHANGE_ROOM", id => {
-    socket.emit(
-      "GET_ROOM",
-      rooms.find(room => room.id === id)
-    );
+  socket.on("CHANGE_ROOM", ({ newRoomId, oldRoomId, userId }) => {
+    const oldRoom = rooms.find(room => room.id === oldRoomId);
+    const newRoom = rooms.find(room => room.id === newRoomId);
+
+    const user = users.find(user => user.id === userId);
+
+    oldRoom.users = oldRoom.users.filter(user => user.id !== userId);
+    newRoom.users.push(user);
+
+    socket.emit("GET_ROOM", newRoom);
+
+    io.emit("GET_ROOMS_LIST", rooms);
   });
 });

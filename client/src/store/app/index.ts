@@ -7,7 +7,7 @@ import { Mutations, mutations } from './mutations';
 
 import { State as RootState } from '@/store';
 
-export type Store<S = State> = CommonStore<S, Mutations<S>>;
+export type Store<S = { app: State }> = CommonStore<S, Mutations<S>>;
 
 export const AppModule: Module<State, RootState> = {
   state,

@@ -47,7 +47,7 @@ export default defineComponent({
   },
   setup() {
     const {
-      state: { chat, app },
+      state: { chat, app, user },
     } = useStore();
 
     const showList = ref(false);
@@ -58,7 +58,12 @@ export default defineComponent({
 
     const onChangeRoom = (id: number) => {
       if (id !== selectedRoom.value.id) {
-        chatSocket.changeRoom(id);
+        chatSocket.changeRoom({
+          oldRoomId: chat.room.id,
+          newRoomId: id,
+          userId: user.id,
+        });
+
         showList.value = false;
       }
     };

@@ -1,7 +1,8 @@
 <template>
   <div class="message-list-item">
-    <UserMain class="message-list-item__user" :user="user" />
-    {{ message }}
+    <UserMain is-bold-name class="message-list-item__user" :user="user">
+      {{ message }}
+    </UserMain>
   </div>
 </template>
 
@@ -30,9 +31,8 @@ export default defineComponent({
 
 <style lang="scss">
 .message-list-item {
-  display: flex;
-
   &__user {
+    display: inline-flex;
     margin-right: 10px;
   }
 }
