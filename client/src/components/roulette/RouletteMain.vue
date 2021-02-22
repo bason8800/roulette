@@ -1,29 +1,59 @@
 <template>
   <div class="roulette-main">
-    <div class="roulette-main__field" :style="style"></div>
+    <div class="roulette-main__field">
+      <BaseCountDownTimer
+        :seconds="40"
+        :run="runTimer"
+        class="roulette-main__countdown"
+        @end-time="onEndTime"
+      />
+
+      <canvas
+        ref="canvas"
+        width="500"
+        height="500"
+        class="roulette-main__canvas"
+      />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue';
+import { defineComponent, onMounted, ref, nextTick } from 'vue';
+
+import { RouletteWheel } from '@/classes/roulette/RouletteWheel';
+
+import BaseCountDownTimer from '@/components/base/BaseCountDownTimer.vue';
 
 export default defineComponent({
   name: 'RouletteMain',
-  setup() {
-    const style = reactive({
-      backgroundPosition: '0px',
+  components: {
+    BaseCountDownTimer,
+  },
+  setup(props, ctx) {
+    const rouletteWheel = new RouletteWheel();
+    const canvas = ref(null);
+    const runTimer = ref(true);
+
+    const stopRotateHandler = (val: string) => {
+      runTimer.value = false;
+
+      nextTick(() => {
+        runTimer.value = true;
+      });
+    };
+
+    const onEndTime = () => rouletteWheel.spin();
+
+    onMounted(() => {
+      rouletteWheel.init(canvas.value, stopRotateHandler);
+      rouletteWheel.drawRouletteWheel();
     });
 
-    const coinWidth = 100;
-    const coinCounts = 16;
-
-    setInterval(() => {
-      // p += 300;
-      // style.backgroundPosition = `${p}px`;
-    }, 100);
-
     return {
-      style,
+      canvas,
+      runTimer,
+      onEndTime,
     };
   },
 });
@@ -34,12 +64,21 @@ export default defineComponent({
   width: 100%;
 
   &__field {
+    position: relative;
+    display: flex;
+    justify-content: center;
     width: 100%;
-    height: 100px;
-    margin-top: 400px;
-    background: url('~@/assets/img/coins-bonus.png') repeat-x center;
-    background-size: auto 100px;
+    height: 500px;
     transition: background $transition;
+  }
+
+  &__countdown {
+    position: absolute;
+    top: 250px;
+    left: 50%;
+    margin-top: -17px;
+    margin-left: -35px;
+    font-size: 30px;
   }
 }
 </style>

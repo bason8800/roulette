@@ -1,6 +1,6 @@
 <template>
-  <transition-group name="transition-fade">
-    <div v-if="list.length" class="message-list">
+  <div v-if="list.length" class="message-list">
+    <transition-group name="transition-fade">
       <MessageListItem
         v-for="(item, idx) in list"
         :key="idx"
@@ -8,8 +8,8 @@
         :user="getUser(item.userId)"
         class="message-list__item"
       />
-    </div>
-  </transition-group>
+    </transition-group>
+  </div>
 </template>
 
 <script lang="ts">

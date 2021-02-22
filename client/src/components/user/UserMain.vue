@@ -50,6 +50,7 @@ export default defineComponent({
     position: relative;
     top: -5px;
     width: 25px;
+    height: 25px;
     margin-right: 10px;
   }
 
