@@ -61,7 +61,7 @@ export default defineComponent({
       parsedSVG.value ? parsedSVG.value.root.attrs.viewBox : '0 0 20 20',
     );
 
-    async function getSvgIconText() {
+    const getSvgIconText = async () => {
       const url = filepath.value;
 
       if (!cache.has(url)) {
@@ -78,17 +78,17 @@ export default defineComponent({
       return cache.has(url)
         ? await cache.get(url)
         : Promise.reject(new Error('Нет SVG-файла в локальном кэше'));
-    }
+    };
 
-    async function loadFile() {
+    const loadFile = async () => {
       try {
         svgString.value = await getSvgIconText();
       } catch (e) {
         console.error('Ошибка загрузки SVG-файла', e);
       }
-    }
+    };
 
-    async function refreshSvg() {
+    const refreshSvg = async () => {
       try {
         const svgTree = await Promise.resolve(parsedSVG.value);
 
@@ -107,7 +107,7 @@ export default defineComponent({
         console.error('Ошибка при обновлении SVG', e);
         ctx.emit('error', e);
       }
-    }
+    };
 
     watch(svgString, refreshSvg);
     watch(filepath, loadFile, { immediate: true });
