@@ -1,4 +1,4 @@
-import { createStore, createLogger } from 'vuex';
+import { createStore } from 'vuex';
 
 import { State as AppState } from '@/store/app/state';
 import { State as ChatState } from '@/store/chat/state';
@@ -20,7 +20,6 @@ export type State = {
 export type Store = ChatStore & AppStore & UserStore & RouletteStore;
 
 export const store = createStore({
-  plugins: process.env.NODE_ENV === 'production' ? [] : [createLogger()],
   modules: {
     chat: ChatModule,
     app: AppModule,

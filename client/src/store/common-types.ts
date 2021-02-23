@@ -31,7 +31,7 @@ export type CommonStore<
 > = Omit<VuexStore<State>, 'commit' | 'getters' | 'dispatch'> & {
   commit<K extends keyof Mutations, P extends Parameters<Mutations[K]>[1]>(
     key: K,
-    payload: P,
+    payload?: P,
     options?: CommitOptions,
   ): ReturnType<Mutations[K]>;
 } & {

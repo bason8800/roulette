@@ -1,12 +1,9 @@
 <template>
   <div class="roulette-main">
     <div class="roulette-main__field">
-      <BaseCountDownTimer
-        :seconds="40"
-        :run="runTimer"
-        class="roulette-main__countdown"
-        @end-time="onEndTime"
-      />
+      <div class="roulette-main__countdown">
+        <span>{{ time }}</span>
+      </div>
 
       <canvas
         ref="canvas"
@@ -19,41 +16,55 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref, nextTick } from 'vue';
+import { defineComponent, onMounted, computed, ref, watch } from 'vue';
+
+import { useStore } from '@/store';
 
 import { RouletteWheel } from '@/classes/roulette/RouletteWheel';
 
-import BaseCountDownTimer from '@/components/base/BaseCountDownTimer.vue';
-
 export default defineComponent({
   name: 'RouletteMain',
-  components: {
-    BaseCountDownTimer,
-  },
-  setup(props, ctx) {
-    const rouletteWheel = new RouletteWheel();
-    const canvas = ref(null);
-    const runTimer = ref(true);
+  setup() {
+    const {
+      state: { roulette },
+    } = useStore();
+
+    let rouletteWheel = {} as RouletteWheel;
+
+    const canvas = ref<HTMLCanvasElement>();
+
+    const time = computed(() => roulette.time);
 
     const stopRotateHandler = (val: string) => {
-      runTimer.value = false;
-
-      nextTick(() => {
-        runTimer.value = true;
-      });
+      console.log(123);
     };
 
-    const onEndTime = () => rouletteWheel.spin();
+    const firstDraw = () => {
+      const context = canvas.value?.getContext('2d');
 
-    onMounted(() => {
-      rouletteWheel.init(canvas.value, stopRotateHandler);
-      rouletteWheel.drawRouletteWheel();
-    });
+      if (!context) {
+        return;
+      }
+
+      rouletteWheel = new RouletteWheel(
+        context,
+        stopRotateHandler,
+        roulette.options,
+      );
+
+      rouletteWheel.drawWheel();
+    };
+
+    const reDraw = () => {
+      rouletteWheel.drawWheel(roulette.startAngle);
+    };
+
+    watch(() => roulette.options, firstDraw);
+    watch(() => roulette.startAngle, reDraw);
 
     return {
       canvas,
-      runTimer,
-      onEndTime,
+      time,
     };
   },
 });
@@ -75,10 +86,11 @@ export default defineComponent({
   &__countdown {
     position: absolute;
     top: 250px;
-    left: 50%;
+    left: 0;
+    width: 100%;
     margin-top: -17px;
-    margin-left: -35px;
     font-size: 30px;
+    text-align: center;
   }
 }
 </style>

@@ -35,6 +35,7 @@ export default defineComponent({
       if (tt <= 0) {
         time.value = '00.00';
         ctx.emit('end-time');
+
         clearInterval(timer);
 
         return;
@@ -42,7 +43,7 @@ export default defineComponent({
 
       const mi = Math.floor(tt / (60 * 100));
       const ss = Math.floor((tt - mi * 60 * 100) / 100);
-      const ms = tt - Math.floor(tt / 100) * 100;
+      const ms = +Math.round(tt - Math.floor(tt / 100) * 100).toFixed(2);
 
       time.value = `${fillZero(ss)}.${fillZero(ms)}`;
     };
@@ -66,16 +67,15 @@ export default defineComponent({
       }
     };
 
-    watch(
-      () => props.run,
-      () => {
-        if (props.run) {
-          setDefaultValues();
-          start();
-        }
-      },
-      { immediate: true },
-    );
+    const watchHandler = () => {
+      if (props.run && props.seconds) {
+        setDefaultValues();
+        start();
+      }
+    };
+
+    watch(() => props.run, watchHandler, { immediate: true });
+    watch(() => props.seconds, watchHandler, { immediate: true });
 
     return { time };
   },

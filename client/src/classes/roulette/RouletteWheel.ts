@@ -1,42 +1,28 @@
 type RotateHandler = (...args: any) => void;
 
 export class RouletteWheel {
-  private options = [1, 2, 13, 3, 12, 4, 0, 11, 5, 10, 6, 9, 7, 8];
+  private readonly arc: number;
 
-  private readonly spinTimeTotal = 5000;
-
-  private readonly arc = Math.PI / (this.options.length / 2);
+  private readonly options: Array<number>;
+  private readonly ctx: CanvasRenderingContext2D;
+  private readonly stopRotateHandler: RotateHandler;
 
   private readonly canvasCenter = 250;
 
-  private startAngle = 0;
-
-  private spinTimeout = 0;
-
-  private spinTime = 0;
-
-  private spinAngleStart = 0;
-
-  private ctx: CanvasRenderingContext2D | null = null;
-
-  private stopRotateHandler: RotateHandler | null = null;
-
-  init(canvas: HTMLCanvasElement | null, stopRotateHandler: RotateHandler) {
-    if (!canvas || !canvas.getContext) {
-      return;
-    }
-
+  constructor(
+    context: CanvasRenderingContext2D,
+    stopRotateHandler: RotateHandler,
+    options: Array<number>,
+  ) {
+    this.ctx = context;
     this.stopRotateHandler = stopRotateHandler;
-    this.ctx = canvas.getContext('2d');
+    this.options = options;
+    this.arc = Math.PI / (this.options.length / 2);
 
-    this.drawRouletteWheel();
+    this.drawWheel();
   }
 
-  drawRouletteWheel() {
-    if (!this.ctx) {
-      return;
-    }
-
+  drawWheel(startAngle = 0) {
     const outsideRadius = 200;
     const textRadius = 160;
     const insideRadius = 125;
@@ -49,7 +35,7 @@ export class RouletteWheel {
     this.ctx.font = 'bold 12px Helvetica, Arial';
 
     for (let i = 0; i < this.options.length; i++) {
-      const angle = this.startAngle + i * this.arc;
+      const angle = startAngle + i * this.arc;
 
       this.drawArc(i, outsideRadius, insideRadius, angle);
       this.drawText(i, angle, textRadius);
@@ -64,10 +50,6 @@ export class RouletteWheel {
     insideRadius: number,
     angle: number,
   ) {
-    if (!this.ctx) {
-      return;
-    }
-
     this.ctx.fillStyle = this.getColor(i, this.options[i]);
 
     this.ctx.beginPath();
@@ -96,10 +78,6 @@ export class RouletteWheel {
   }
 
   drawArrow(outsideRadius: number) {
-    if (!this.ctx) {
-      return;
-    }
-
     const arrowLines = [
       [this.canvasCenter + 4, this.canvasCenter - (outsideRadius + 5)],
       [this.canvasCenter + 4, this.canvasCenter - (outsideRadius - 5)],
@@ -122,10 +100,6 @@ export class RouletteWheel {
   }
 
   drawText(i: number, angle: number, textRadius: number) {
-    if (!this.ctx) {
-      return;
-    }
-
     this.ctx.fillStyle = 'white';
 
     this.ctx.translate(
@@ -146,59 +120,5 @@ export class RouletteWheel {
     }
 
     return i % 2 === 0 ? 'red' : 'black';
-  }
-
-  spin() {
-    this.spinTime = 0;
-    this.spinAngleStart = Math.random() * 10 + 10;
-
-    this.rotateWheel();
-  }
-
-  rotateWheel() {
-    this.spinTime += 30;
-
-    if (this.spinTime >= this.spinTimeTotal) {
-      this.stopRotateWheel();
-      return;
-    }
-
-    const spinAngle =
-      this.spinAngleStart -
-      this.easeOut(this.spinTime, 0, this.spinAngleStart, this.spinTimeTotal);
-
-    this.startAngle += (spinAngle * Math.PI) / 180;
-
-    this.drawRouletteWheel();
-
-    this.spinTimeout = setTimeout(() => this.rotateWheel(), 10);
-  }
-
-  stopRotateWheel() {
-    if (!this.ctx) {
-      return;
-    }
-
-    clearTimeout(this.spinTimeout);
-
-    const degrees = (this.startAngle * 180) / Math.PI + 90;
-    const arcd = (this.arc * 180) / Math.PI;
-    const index = Math.floor((360 - (degrees % 360)) / arcd);
-
-    this.ctx.save();
-
-    const text = this.options[index].toString();
-
-    if (this.stopRotateHandler) {
-      this.stopRotateHandler(text);
-    }
-
-    this.ctx.restore();
-  }
-
-  easeOut(t: number, b: number, c: number, d: number) {
-    const ts = (t /= d) * t;
-    const tc = ts * t;
-    return b + c * (tc + -3 * ts + 3 * t);
   }
 }
