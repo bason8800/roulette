@@ -12,18 +12,24 @@
         class="roulette-main__canvas"
       />
     </div>
+
+    <RouletteRollsList class="roulette-main__list" :list="rollsList" />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, computed, ref, watch } from 'vue';
+import { defineComponent, computed, ref, watch } from 'vue';
 
 import { useStore } from '@/store';
-
 import { RouletteWheel } from '@/classes/roulette/RouletteWheel';
+
+import RouletteRollsList from '@/components/roulette/RouletteRollsList.vue';
 
 export default defineComponent({
   name: 'RouletteMain',
+  components: {
+    RouletteRollsList,
+  },
   setup() {
     const {
       state: { roulette },
@@ -34,6 +40,7 @@ export default defineComponent({
     const canvas = ref<HTMLCanvasElement>();
 
     const time = computed(() => roulette.time);
+    const rollsList = computed(() => roulette.previousRolls);
 
     const stopRotateHandler = (val: string) => {
       console.log(123);
@@ -65,6 +72,7 @@ export default defineComponent({
     return {
       canvas,
       time,
+      rollsList,
     };
   },
 });

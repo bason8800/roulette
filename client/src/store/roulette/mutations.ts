@@ -16,7 +16,10 @@ export type Mutations<S = State> = {
 
   [MutationTypes.SET_WHEEL_DATA](
     state: S,
-    payload: { arc: Roulette['arc']; startAngle: Roulette['startAngle'] },
+    payload: {
+      previousRolls: Roulette['previousRolls'];
+      startAngle: Roulette['startAngle'];
+    },
   ): void;
 };
 

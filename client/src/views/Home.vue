@@ -1,21 +1,28 @@
 <template>
   <div class="roulette">
+    <div class="roulette__balance">Balance: {{ balance }}</div>
+
     <div class="roulette__left">
       <ChatRooms class="roulette__chat-rooms" />
-
       <ChatMain class="roulette__chat" />
     </div>
 
-    <RouletteMain class="roulette__main" />
+    <div class="roulette__wrapper">
+      <RouletteMain class="roulette__main" />
+      <BetsMain class="roulette__bets" />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, computed } from 'vue';
 
 import ChatMain from '@/components/chat/ChatMain.vue';
 import ChatRooms from '@/components/chat/ChatRooms.vue';
 import RouletteMain from '@/components/roulette/RouletteMain.vue';
+import BetsMain from '@/components/bet/BetsMain.vue';
+
+import { useStore } from '@/store';
 
 export default defineComponent({
   name: 'Home',
@@ -23,6 +30,18 @@ export default defineComponent({
     ChatMain,
     ChatRooms,
     RouletteMain,
+    BetsMain,
+  },
+  setup() {
+    const {
+      state: { user },
+    } = useStore();
+
+    const balance = computed(() => user.balance);
+
+    return {
+      balance,
+    };
   },
 });
 </script>
@@ -31,6 +50,14 @@ export default defineComponent({
 .roulette {
   display: flex;
   height: 100%;
+
+  &__balance {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    font-size: 25px;
+    color: $color-yellow;
+  }
 
   &__left {
     display: flex;
@@ -45,6 +72,28 @@ export default defineComponent({
     height: 85%;
     margin-top: 15px;
     overflow: auto;
+  }
+
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  &__bets {
+    margin-top: 50px;
+  }
+
+  &__bet-actions {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0 50px;
+    margin-top: 50px;
+  }
+
+  &__bets-list {
+    margin-top: 50px;
   }
 }
 </style>

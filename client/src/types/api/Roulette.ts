@@ -1,9 +1,14 @@
+export type WheelItem = {
+  value: number;
+  color: string;
+};
+
 export type RouletteWheelData = {
-  arc: number;
   startAngle: number;
+  previousRolls: Array<WheelItem>;
 };
 
 export type Roulette = {
   time: number;
-  options: Array<number>;
+  options: Array<WheelItem>;
 } & RouletteWheelData;

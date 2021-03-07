@@ -18,7 +18,7 @@ export default defineComponent({
   inheritAttrs: false,
   props: {
     modelValue: {
-      type: String,
+      type: [String, Number],
       default: '',
     },
     component: {
@@ -50,8 +50,7 @@ export default defineComponent({
     color: $color-grey-1;
     resize: none;
     background-color: $color-dark;
-    border-color: $color-grey;
-    border-width: 1px;
+    border: 1px solid $color-grey;
     border-radius: 4px;
     outline: none;
     transition: border $transition;

@@ -1,9 +1,27 @@
+const bets = require("../mock/bets");
+
+const getColor = (i, val) => {
+  if (val === 0) {
+    return "green";
+  }
+
+  return i % 2 === 0 ? "red" : "black";
+};
+
+const getOptions = () => {
+  return [1, 2, 13, 3, 12, 4, 0, 11, 5, 10, 6, 9, 7, 8].map((value, i) => ({
+    value,
+    color: getColor(i, value)
+  }));
+};
+
 class Roulette {
   io = null;
-  options = [1, 2, 13, 3, 12, 4, 0, 11, 5, 10, 6, 9, 7, 8];
+  options = getOptions();
+  previousRolls = [];
 
   nextSpinTime = 0;
-  timeBeforeNextSpin = 10000;
+  timeBeforeNextSpin = 30000;
 
   spinTime = 0;
   spinAngleStart = 0;
@@ -78,15 +96,38 @@ class Roulette {
   stopRotateWheel() {
     clearTimeout(this.spinTimeout);
 
-    this.setDefaultSpin();
+    const roll = this.getWinRoll();
+    const bet = bets.find(item => item.color === roll.color);
 
+    this.setDefaultSpin();
+    this.updatePreviousRolls(roll);
+
+    this.io.emit("GET_WHEEL_DATA", { previousRolls: this.previousRolls });
+    this.io.emit("GET_WIN_BET", bet.id);
+
+    setTimeout(() => {
+      this.io.emit("GET_WHEEL_DATA", {
+        startAngle: 0
+      });
+      this.io.emit("GET_WIN_BET");
+    }, 1000);
+  }
+
+  getWinRoll() {
     const degrees = (this.startAngle * 180) / Math.PI + 90;
     const arcd = (this.arc * 180) / Math.PI;
     const index = Math.floor((360 - (degrees % 360)) / arcd);
+    console.log(index);
 
-    setTimeout(() => this.io.emit("GET_WHEEL_DATA", { startAngle: 0 }), 1000);
+    return this.options[index];
+  }
 
-    return index;
+  updatePreviousRolls(roll) {
+    this.previousRolls.push(roll);
+
+    if (this.previousRolls.length > 10) {
+      this.previousRolls = this.previousRolls.slice(1);
+    }
   }
 
   easeOut(t, b, c, d) {

@@ -1,9 +1,13 @@
 type RotateHandler = (...args: any) => void;
+type WheelItem = {
+  value: number;
+  color: string;
+};
 
 export class RouletteWheel {
   private readonly arc: number;
 
-  private readonly options: Array<number>;
+  private readonly options: Array<WheelItem>;
   private readonly ctx: CanvasRenderingContext2D;
   private readonly stopRotateHandler: RotateHandler;
 
@@ -12,7 +16,7 @@ export class RouletteWheel {
   constructor(
     context: CanvasRenderingContext2D,
     stopRotateHandler: RotateHandler,
-    options: Array<number>,
+    options: Array<WheelItem>,
   ) {
     this.ctx = context;
     this.stopRotateHandler = stopRotateHandler;
@@ -50,7 +54,7 @@ export class RouletteWheel {
     insideRadius: number,
     angle: number,
   ) {
-    this.ctx.fillStyle = this.getColor(i, this.options[i]);
+    this.ctx.fillStyle = this.options[i].color;
 
     this.ctx.beginPath();
 
@@ -108,17 +112,9 @@ export class RouletteWheel {
     );
     this.ctx.rotate(angle + this.arc / 2 + Math.PI / 2);
 
-    const text = this.options[i].toString();
+    const text = this.options[i].value.toString();
 
     this.ctx.fillText(text, -this.ctx.measureText(text).width / 2, 0);
     this.ctx.restore();
-  }
-
-  getColor(i: number, val: number) {
-    if (val === 0) {
-      return 'green';
-    }
-
-    return i % 2 === 0 ? 'red' : 'black';
   }
 }

@@ -1,6 +1,7 @@
 const users = require("../mock/users");
 const rooms = require("../mock/rooms");
 const mainData = require("../mock/mainData");
+const bets = require("../mock/bets");
 
 class Server {
   io = null;
@@ -19,6 +20,7 @@ class Server {
       this.io.emit("GET_MAIN_DATA", this.getMainData());
 
       socket.emit("GET_ROULETTE_OPTIONS", this.roulette.options);
+      socket.emit("GET_BETS_LIST", bets);
 
       socket.on("ADD_MESSAGE", data => this.addMessage(data));
       socket.on("CHANGE_ROOM", data => this.changeRoom(data, socket));
@@ -30,11 +32,9 @@ class Server {
     const user = this.createUser();
 
     users.push(user);
-
     room.users.push(user);
 
     socket.emit("GET_USER", { ...user, balance: 10000 });
-
     this.io.emit("GET_ROOM", room);
   }
 

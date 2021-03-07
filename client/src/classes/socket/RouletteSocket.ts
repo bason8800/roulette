@@ -1,6 +1,6 @@
 import { Socket } from '@/classes/socket/Socket';
 
-import { RouletteWheelData } from '@/types/api/Roulette';
+import { RouletteWheelData, WheelItem } from '@/types/api/Roulette';
 import { ROULETTE_EVENTS } from '@/constants/socketEvents';
 import { MutationTypes } from '@/store/roulette/mutations';
 
@@ -19,7 +19,7 @@ export class RouletteSocket extends Socket {
     this.store.commit(MutationTypes.SET_TIME, time);
   }
 
-  getOptions(options: Array<number>) {
+  getOptions(options: Array<WheelItem>) {
     this.store.commit(MutationTypes.SET_OPTIONS, options);
   }
 

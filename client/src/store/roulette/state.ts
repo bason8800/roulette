@@ -6,7 +6,7 @@ export type State = {
 
 export const state: State = {
   time: 0,
-  arc: 0,
+  previousRolls: [],
   startAngle: 0,
   options: [],
 };
