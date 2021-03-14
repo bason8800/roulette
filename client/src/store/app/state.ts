@@ -7,4 +7,5 @@ export type State = {
 export const state: State = {
   lang: 'en',
   usersOnline: 0,
+  users: [],
 };

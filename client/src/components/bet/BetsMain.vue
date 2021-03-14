@@ -1,7 +1,7 @@
 <template>
   <div class="bets-main">
     <BetActions v-model="userBet" class="bets-main__actions" />
-    <BetsList class="bets-main__list" />
+    <BetsList :user-bet="userBet" class="bets-main__list" />
   </div>
 </template>
 

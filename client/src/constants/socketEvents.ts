@@ -14,6 +14,7 @@ export const APP_EVENTS = {
 
 export const USER_EVENTS = {
   GET_USER: 'GET_USER',
+  UPDATE_USER_BALANCE: 'UPDATE_USER_BALANCE',
 };
 
 export const ROULETTE_EVENTS = {
@@ -25,4 +26,5 @@ export const ROULETTE_EVENTS = {
 export const BET_EVENTS = {
   GET_BETS_LIST: 'GET_BETS_LIST',
   GET_WIN_BET: 'GET_WIN_BET',
+  ADD_BET: 'ADD_BET',
 };

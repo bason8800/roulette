@@ -12,4 +12,8 @@ const users = [
   { name: "Benny", level: 45, avatar: "" }
 ];
 
-module.exports = users.map((user, idx) => ({ ...user, id: idx + 1 }));
+module.exports = users.map((user, idx) => ({
+  ...user,
+  id: idx + 1,
+  balance: 10000
+}));

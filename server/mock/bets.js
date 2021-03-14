@@ -1,5 +1,5 @@
 module.exports = [
-  { id: 1, name: "2x", color: "red" },
-  { id: 2, name: "14x", color: "green" },
-  { id: 3, name: "2x", color: "black" }
+  { id: 1, count: 2, color: "red", items: [] },
+  { id: 2, count: 14, color: "green", items: [] },
+  { id: 3, count: 2, color: "black", items: [] }
 ];

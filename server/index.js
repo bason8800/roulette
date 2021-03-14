@@ -16,14 +16,23 @@ app.use((req, res, next) => {
   next();
 });
 
+const Room = require("./classes/Room");
+const User = require("./classes/User");
 const Server = require("./classes/Server.js");
 const Roulette = require("./classes/Roulette.js");
 
-const rouletteInstance = new Roulette(io);
-const serverInstance = new Server(io, rouletteInstance);
+const user = new User(io);
+const room = new Room(io);
+const roulette = new Roulette({ io, user });
+const server = new Server({
+  io,
+  roulette,
+  user,
+  room
+});
 
-serverInstance.connection();
-rouletteInstance.init();
+server.connection();
+roulette.init();
 
 http.listen(3000, () => {
   console.log("listening on *:3000");

@@ -20,4 +20,8 @@ export class BetSocket extends Socket {
   getBetWin(data: number) {
     this.store.commit(MutationsTypes.SET_WIN_BET, data);
   }
+
+  add(data: { userId: number; id: number; value: number }) {
+    this.socket.emit(BET_EVENTS.ADD_BET, data);
+  }
 }

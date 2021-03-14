@@ -6,6 +6,7 @@ import { User } from '@/types/api/User';
 export class UserSocket extends Socket {
   protected events = {
     [USER_EVENTS.GET_USER]: this.getUser,
+    [USER_EVENTS.UPDATE_USER_BALANCE]: this.updateUserBalance,
   };
 
   constructor(socket: SocketIOClient.Socket) {
@@ -14,5 +15,9 @@ export class UserSocket extends Socket {
 
   getUser(user: User) {
     this.store.commit(MutationTypes.SET_USER, user);
+  }
+
+  updateUserBalance(balance: number) {
+    this.store.commit(MutationTypes.UPDATE_USER_BALANCE, balance);
   }
 }

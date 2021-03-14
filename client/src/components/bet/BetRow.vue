@@ -1,19 +1,53 @@
 <template>
   <div class="bet-row">
-    <div class="bet-row__header">
+    <div class="bet-row__header" @click="onAddBet">
       <div class="bet-row__color" :style="`background: ${bet.color}`"></div>
-      PLACE BET {{ bet.name }}
+      PLACE BET
+      <div class="bet-row__win">win {{ bet.count }}x</div>
     </div>
+
+    <div class="bet-row__total">
+      <div class="bet-row__total-count">{{ bet.items.length }} Bets Total</div>
+      <div class="bet-row__total-value" :class="{ 'is-active': isWin }">
+        {{ isWin ? '+' : '' }}
+        {{ totalAmount }}
+      </div>
+    </div>
+
+    <template v-if="bet.items.length">
+      <div class="bet-row__items">
+        <div
+          v-for="item in sortedBetItems"
+          :key="item.userId"
+          class="bet-row__item"
+        >
+          <UserMain :user="getUser(item.userId)" />
+
+          <div class="bet-row__item-value" :class="{ 'is-active': isWin }">
+            {{ isWin ? '+' : '' }}
+            {{ isWin ? item.value * bet.count : item.value }}
+          </div>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { defineComponent, computed, PropType } from 'vue';
 
 import { Bet } from '@/types/api/Bet';
 
+import { betSocket } from '@/socket';
+import { useStore } from '@/store';
+
+import UserMain from '@/components/user/UserMain.vue';
+
 export default defineComponent({
   name: 'BetRow',
+  components: {
+    UserMain,
+  },
   props: {
     bet: {
       type: Object as PropType<Bet>,
@@ -23,12 +57,65 @@ export default defineComponent({
       type: Number,
       default: 0,
     },
+    userBet: {
+      type: Number,
+      default: 0,
+    },
   },
-  setup() {},
+  setup(props) {
+    const {
+      state: { user, app },
+    } = useStore();
+
+    const onAddBet = () => {
+      if (!props.userBet) {
+        return;
+      }
+
+      betSocket.add({
+        userId: user.id,
+        id: props.bet.id,
+        value: +props.userBet,
+      });
+    };
+
+    const isWin = computed(() => props.winId === props.bet.id);
+
+    const totalAmount = computed(() => {
+      const res = props.bet.items.reduce((acc, item) => item.value + acc, 0);
+
+      if (isWin.value) {
+        return res * props.bet.count;
+      }
+
+      return res;
+    });
+
+    const sortedBetItems = computed(() =>
+      [...props.bet.items].sort((a, b) => (a.value < b.value ? 1 : -1)),
+    );
+
+    const getUser = (userId: number) =>
+      app.users.find(user => user.id === userId);
+
+    return {
+      onAddBet,
+      getUser,
+      totalAmount,
+      sortedBetItems,
+      isWin,
+    };
+  },
 });
 </script>
 
 <style lang="scss">
+@mixin isActive {
+  &.is-active {
+    color: $color-yellow;
+  }
+}
+
 .bet-row {
   &__header {
     display: flex;
@@ -46,6 +133,44 @@ export default defineComponent({
     height: 30px;
     margin-right: 10px;
     border-radius: 30px;
+  }
+
+  &__win {
+    margin-left: auto;
+  }
+
+  &__total {
+    display: flex;
+    padding: 10px;
+    border: 2px solid $color-dark;
+    border-radius: 5px;
+
+    &-value {
+      @include isActive;
+
+      margin-left: auto;
+    }
+  }
+
+  &__items {
+    padding: 10px;
+    border: 2px solid $color-dark;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    &-value {
+      @include isActive;
+
+      margin-left: auto;
+    }
   }
 }
 </style>

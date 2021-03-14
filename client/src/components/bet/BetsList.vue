@@ -5,6 +5,7 @@
       :key="bet.id"
       :bet="bet"
       :win-id="winId"
+      :user-bet="userBet"
       class="bets-list__row"
     />
   </div>
@@ -18,6 +19,12 @@ import BetRow from '@/components/bet/BetRow.vue';
 
 export default defineComponent({
   name: 'BetsList',
+  props: {
+    userBet: {
+      type: Number,
+      default: 0,
+    },
+  },
   components: {
     BetRow,
   },
