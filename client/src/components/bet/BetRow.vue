@@ -16,25 +16,30 @@
 
     <template v-if="bet.items.length">
       <div class="bet-row__items">
-        <div
-          v-for="item in sortedBetItems"
-          :key="item.userId"
-          class="bet-row__item"
+        <transition-group
+          name="transition-fade-height"
+          :appear="sortedBetItems.length <= 1 && isMounted"
         >
-          <UserMain :user="getUser(item.userId)" />
+          <div
+            v-for="item in sortedBetItems"
+            :key="item.userId"
+            class="bet-row__item"
+          >
+            <UserMain :user="getUser(item.userId)" />
 
-          <div class="bet-row__item-value" :class="{ 'is-active': isWin }">
-            {{ isWin ? '+' : '' }}
-            {{ isWin ? item.value * bet.count : item.value }}
+            <div class="bet-row__item-value" :class="{ 'is-active': isWin }">
+              {{ isWin ? '+' : '' }}
+              {{ isWin ? item.value * bet.count : item.value }}
+            </div>
           </div>
-        </div>
+        </transition-group>
       </div>
     </template>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, PropType } from 'vue';
+import { defineComponent, computed, ref, onMounted, PropType } from 'vue';
 
 import { Bet } from '@/types/api/Bet';
 
@@ -79,6 +84,8 @@ export default defineComponent({
       });
     };
 
+    const isMounted = ref(false);
+
     const isWin = computed(() => props.winId === props.bet.id);
 
     const totalAmount = computed(() => {
@@ -98,12 +105,17 @@ export default defineComponent({
     const getUser = (userId: number) =>
       app.users.find(user => user.id === userId);
 
+    onMounted(() => {
+      isMounted.value = true;
+    });
+
     return {
       onAddBet,
       getUser,
       totalAmount,
       sortedBetItems,
       isWin,
+      isMounted,
     };
   },
 });
@@ -160,10 +172,10 @@ export default defineComponent({
   &__item {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
+    padding-bottom: 10px;
 
     &:last-child {
-      margin-bottom: 0;
+      padding-bottom: 0;
     }
 
     &-value {

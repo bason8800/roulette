@@ -18,7 +18,7 @@ export default defineComponent({
     BetsList,
   },
   setup() {
-    const userBet = ref(0);
+    const userBet = ref(100);
 
     return {
       userBet,
