@@ -17,7 +17,7 @@
     <template v-if="bet.items.length">
       <div class="bet-row__items">
         <transition-group
-          name="transition-fade-height"
+          name="bet-row-fade-height"
           :appear="sortedBetItems.length <= 1 && isMounted"
         >
           <div
@@ -183,6 +183,23 @@ export default defineComponent({
 
       margin-left: auto;
     }
+  }
+}
+
+.bet-row-fade-height {
+  &-enter-active {
+    transition: all $transition;
+  }
+
+  &-enter-from {
+    height: 0;
+    padding: 0;
+    opacity: 0;
+  }
+
+  &-enter-to {
+    height: 25px;
+    opacity: 1;
   }
 }
 </style>

@@ -1,8 +1,6 @@
+import { WheelItem } from '@/types/api/Roulette';
+
 type RotateHandler = (...args: any) => void;
-type WheelItem = {
-  value: number;
-  color: string;
-};
 
 export class RouletteWheel {
   private readonly arc: number;

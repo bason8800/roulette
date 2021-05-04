@@ -13,4 +13,7 @@ $color-yellow: #e9b10b;
 $color-user-lvl-1: #aa9987;
 
 $transition-duration: 0.25s;
+$transition-duration-slow: 0.5s;
+
 $transition: $transition-duration ease;
+$transition-slow: $transition-duration-slow ease;

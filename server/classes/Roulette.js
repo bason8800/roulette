@@ -16,6 +16,9 @@ const getOptions = () => {
   }));
 };
 
+const WHEEL_TO_DEFAULT_TIMEOUT = 3000;
+const WHEEL_TO_DEFAULT_ITERATION_COUNT = 50;
+
 class Roulette {
   io = null;
   user = null;
@@ -24,7 +27,7 @@ class Roulette {
   previousRolls = [];
 
   nextSpinTime = 0;
-  timeBeforeNextSpin = 10000;
+  timeBeforeNextSpin = 1000;
 
   spinTime = 0;
   spinAngleStart = 0;
@@ -55,6 +58,30 @@ class Roulette {
     this.checkTime();
   }
 
+  updateNextSpinTime() {
+    this.nextSpinTime = +new Date() + this.timeBeforeNextSpin;
+  }
+
+  checkTime() {
+    const currDate = +new Date();
+
+    if (currDate > this.nextSpinTime) {
+      clearTimeout(this.countDownTimeout);
+
+      this.rotateWheel();
+
+      this.io.emit(events.GET_ROULETTE_TIME, "0.00");
+
+      return;
+    }
+
+    const time = (this.nextSpinTime - +new Date()) / 1000;
+
+    this.io.emit(events.GET_ROULETTE_TIME, time.toFixed(2));
+
+    this.countDownTimeout = setTimeout(() => this.checkTime(), 10);
+  }
+
   rotateWheel() {
     this.spinTime += 30;
 
@@ -79,7 +106,6 @@ class Roulette {
     const roll = this.getWinRoll();
     const bet = bets.find(item => item.color === roll.color);
 
-    this.setDefaultSpin();
     this.updatePreviousRolls(roll);
 
     this.io.emit(events.GET_WHEEL_DATA, { previousRolls: this.previousRolls });
@@ -93,13 +119,12 @@ class Roulette {
     );
 
     setTimeout(() => {
-      this.io.emit(events.GET_WHEEL_DATA, { startAngle: 0 });
-      this.io.emit(events.GET_WIN_BET, 0);
+      const angleToBack = this.startAngle / WHEEL_TO_DEFAULT_ITERATION_COUNT;
 
-      this.clearBets();
-      this.updateNextSpinTime();
-      this.checkTime();
-    }, 3000);
+      this.returnWheelToDefaultState(angleToBack);
+
+      this.io.emit(events.GET_WIN_BET, 0);
+    }, WHEEL_TO_DEFAULT_TIMEOUT);
   }
 
   getWinRoll() {
@@ -107,38 +132,7 @@ class Roulette {
     const arcd = (this.arc * 180) / Math.PI;
     const index = Math.floor((360 - (degrees % 360)) / arcd);
 
-    return this.options[index];
-  }
-
-  clearBets() {
-    bets.forEach(bet => {
-      bet.items = [];
-    });
-
-    this.io.emit(events.GET_BETS_LIST, bets);
-  }
-
-  updateNextSpinTime() {
-    this.nextSpinTime = +new Date() + this.timeBeforeNextSpin;
-  }
-
-  checkTime() {
-    const currDate = +new Date();
-
-    if (currDate > this.nextSpinTime) {
-      clearTimeout(this.countDownTimeout);
-
-      this.rotateWheel();
-      this.io.emit(events.GET_ROULETTE_TIME, "0.00");
-
-      return;
-    }
-
-    const time = (this.nextSpinTime - +new Date()) / 1000;
-
-    this.io.emit(events.GET_ROULETTE_TIME, time.toFixed(2));
-
-    this.countDownTimeout = setTimeout(() => this.checkTime(), 10);
+    return { id: Math.random(), ...this.options[index] };
   }
 
   updatePreviousRolls(roll) {
@@ -147,6 +141,37 @@ class Roulette {
     if (this.previousRolls.length > 10) {
       this.previousRolls = this.previousRolls.slice(1);
     }
+  }
+
+  returnWheelToDefaultState(angleToBack) {
+    if (this.startAngle <= 0) {
+      setTimeout(() => {
+        this.setDefaultSpin();
+        this.clearBets();
+        this.updateNextSpinTime();
+        this.checkTime();
+      }, 2000);
+
+      return;
+    }
+
+    this.startAngle -= angleToBack;
+
+    if (this.startAngle <= angleToBack) {
+      this.startAngle = 0;
+    }
+
+    this.io.emit(events.GET_WHEEL_DATA, { startAngle: this.startAngle });
+
+    setTimeout(() => this.returnWheelToDefaultState(angleToBack), 10);
+  }
+
+  clearBets() {
+    bets.forEach(bet => {
+      bet.items = [];
+    });
+
+    this.io.emit(events.GET_BETS_LIST, bets);
   }
 
   easeOut(t, b, c, d) {

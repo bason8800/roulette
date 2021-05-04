@@ -27,6 +27,9 @@ class Server extends Base {
       this.io.emit(events.GET_ROOMS_LIST, rooms);
       this.io.emit(events.GET_MAIN_DATA, this.getMainData());
 
+      socket.emit(events.GET_WHEEL_DATA, {
+        previousRolls: this.roulette.previousRolls
+      });
       socket.emit(events.GET_ROULETTE_OPTIONS, this.roulette.options);
       socket.emit(events.GET_BETS_LIST, bets);
 
